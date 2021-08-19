@@ -4,7 +4,8 @@
 # v0.01  - movers with velocity, acceleration, position, show, update, apply_force
 # bounce off of walls
 # v0.02  - attractor
-# v0.02  - draw force vector
+# v0.0   - repulser
+# v0.0   - draw force vector
 # v0.0   - walls exert repulsion force
 # v0.0   - make each mover a random color
 # v0.0   - mutual gravitation
@@ -13,16 +14,14 @@
 
 from Mover import *
 from Attractor import *
+from Repulser import *
 
 def setup():
     global movers, attractors
-    size(800, 600)
+    size(1500, 800)
     colorMode(HSB, 360, 100, 100, 100)
     attractors = []
     movers = []
-    frameRate(30)
-    for i in range(10):
-        movers.append(Mover(random(70, width-70), random(70, height-70)))
 
 def draw():
     global movers, attractors
@@ -30,14 +29,25 @@ def draw():
     
     #gravity = PVector(0, 9.8/frameRate)
     #wind = PVector(random(-1, 1), random(-1, 1))
+    # If we nest the mover for loop inside the attractor for loop, there isn't going
+    # to be any movers shown. Luckily, we have 0 movers to start with, so it doesn't
+    # matter. 
     for attractor in attractors:
         attractor.show()
-        for mover in movers:
-            attractor.attract(mover)
-            mover.show()
-            mover.update()
-            # mover.check_edges()
+    
+    for mover in movers:
+        for attractor in attractors:
+            mover.apply_force(attractor.attract(mover))
+        mover.show()
+        mover.update()
+        mover.check_edges()
+            
             
 def mousePressed():
-    global attractors
-    attractors.append(Attractor(mouseX, mouseY, random(1, 3)))            
+    global attractors, mover
+    if mouseButton == LEFT:
+        attractors.append(Attractor(mouseX, mouseY, random(1, 3)))  
+    if mouseButton == RIGHT:
+        attractors.append(Repulser(mouseX, mouseY, random(1, 3)))
+    for i in range(3): 
+        movers.append(Mover(mouseX, mouseY))

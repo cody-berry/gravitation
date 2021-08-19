@@ -11,6 +11,7 @@ class Mover(object):
     # If we don't do this, how are we going to see where the movers are?
     def show(self): 
         fill(0, 0, 100, 50)
+        stroke(0, 0, 100, 50)
         circle(self.pos.x, self.pos.y, self.r*2)
         
         
@@ -18,7 +19,9 @@ class Mover(object):
         # mass = 1, and a = F/m, so a = F.
         self.acc.add(force)
         
-        
+    
+    # If we don't do this, we'll never see the movers move, if we call the show
+    # function.
     def update(self):
         self.vel.add(self.acc)
         self.pos.add(self.vel)
@@ -27,16 +30,22 @@ class Mover(object):
     
    
     def check_edges(self):
+        # vertical edges
+        # right edge
         if self.pos.x + self.r > width:
             self.pos.x = width - self.r
             self.vel.x *= -1
+        # left edge
         if self.pos.x - self.r < 0:
             self.pos.x = self.r
             self.vel.x *= -1
         
+        # horizontal edges
+        # bottom edge
         if self.pos.y + self.r > height:
             self.pos.y = height - self.r
             self.vel.y *= -1
+        # top edge
         if self.pos.y - self.r < 0:
             self.pos.y = self.r
             self.vel.y *= -1
