@@ -8,6 +8,7 @@ class Mover(object):
         self.m = random(3, 8)
         self.r = sqrt(self.m) * 10
         self.G = random(1, 3)
+        self.total_force = PVector(0, 0)
         
     
     # If we don't do this, how are we going to see where the movers are?
@@ -15,10 +16,29 @@ class Mover(object):
         fill(0, 0, 100, 50)
         stroke(0, 0, 100, 50)
         circle(self.pos.x, self.pos.y, self.r*2)
+        fill(0, 0, 0, 0)
+        pushMatrix()
+        translate(self.pos.x, self.pos.y)
+        rotate(self.total_force.heading())
+        line(0, 
+             0, 
+             self.total_force.mag()*6,
+             0)
+        line(self.total_force.mag()*6,
+             0, 
+             self.total_force.mag()*6 - 3,
+             -3)
+        line(self.total_force.mag()*6,
+             0,
+             self.total_force.mag()*6 - 3,
+             3)
+        popMatrix()
         
         
     def apply_force(self, force): # force is the force we're going to apply
         # mass = 1, and a = F/m, so a = F.
+        fill(0, 0, 0, 100)
+        self.total_force.add(force)
         self.acc.add(PVector.div(force, self.m))
         
     
@@ -28,6 +48,7 @@ class Mover(object):
         self.vel.add(self.acc)
         self.pos.add(self.vel)
         self.acc = PVector(0, 0)
+        self.total_force = PVector(0, 0)
         
     
    

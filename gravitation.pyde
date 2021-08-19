@@ -4,9 +4,9 @@
 # v0.01  - movers with velocity, acceleration, position, show, update, apply_force
 # bounce off of walls
 # v0.02  - attractor
-# v0.03  - repulser
+# v0.03  - repulsor
 # v0.04  - mutual gravitation
-# v0.0   - draw force vector
+# v0.041 - draw force vector
 # v0.0   - path tracing
 # v0.0   - flash balls
 
@@ -41,10 +41,10 @@ def draw():
     #     mover.check_edges()
     
     for i in range(len(movers)):
-        movers[i].show()
         for j in range(len(movers)):
             if j != i:
                 movers[j].apply_force(movers[i].attract(movers[j]))
+        movers[i].show()
         movers[i].update()
         movers[i].check_edges()
         
