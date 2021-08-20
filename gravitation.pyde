@@ -1,14 +1,19 @@
 # 2021.08.17 Cody
 # Mutual Gravitation In 2D
 # Based on Daniel Shiffman's Nature Of Code series for gravitational attraction
+# v0.0:
 # v0.01  - movers with velocity, acceleration, position, show, update, apply_force
 # bounce off of walls
 # v0.02  - attractor
 # v0.03  - repulsor
 # v0.04  - mutual gravitation
 # v0.041 - draw force vector
-# v0.0   - path tracing
-# v0.0   - flash balls
+# v0.05  - path tracing
+# v0.051 - flash balls
+# v0.1:
+# v0.1   - P3D and PeasyCam
+# v0.1   - gravitation in 3D
+# v0.1   - 
 
 from Mover import *
 from Attractor import *
@@ -17,13 +22,20 @@ from Repulser import *
 def setup():
     global movers, attractors
     size(1500, 800)
+    background(209, 95, 33, 10)
     colorMode(HSB, 360, 100, 100, 100)
     attractors = []
     movers = []
 
+
+
 def draw():
     global movers, attractors
-    background(210, 100, 30, 100)
+    
+    fill(0, 3)
+    fill(209, 95, 33, 10)
+    rect(0, 0, width, height)
+    
     
     #gravity = PVector(0, 9.8/frameRate)
     #wind = PVector(random(-1, 1), random(-1, 1))
@@ -47,10 +59,13 @@ def draw():
         movers[i].show()
         movers[i].update()
         movers[i].check_edges()
+        movers[i].showArrow()
         
     fill(map(len(movers), 0, 60, 180, 0), 100, 100)
     text(len(movers), width-50, height-50)
-            
+    
+
+                
             
 def mousePressed():
     global attractors, mover

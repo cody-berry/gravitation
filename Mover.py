@@ -16,6 +16,9 @@ class Mover(object):
         fill(0, 0, 100, 50)
         stroke(0, 0, 100, 50)
         circle(self.pos.x, self.pos.y, self.r*2)
+        
+        
+    def showArrow(self):
         fill(0, 0, 0, 0)
         pushMatrix()
         translate(self.pos.x, self.pos.y)
