@@ -21,7 +21,9 @@ from Repulser import *
 
 def setup():
     global movers, attractors
-    size(1500, 800)
+    size(1500, 1000)
+    filter(BLUR, 6)
+    stroke(5)
     background(209, 95, 33, 10)
     colorMode(HSB, 360, 100, 100, 100)
     attractors = []
@@ -34,7 +36,9 @@ def draw():
     
     fill(0, 3)
     fill(209, 95, 33, 10)
+    rectMode(CORNER)
     rect(0, 0, width, height)
+    saved_movers = [] 
     
     
     #gravity = PVector(0, 9.8/frameRate)
@@ -56,10 +60,21 @@ def draw():
         for j in range(len(movers)):
             if j != i:
                 movers[j].apply_force(movers[i].attract(movers[j]))
-        movers[i].show()
+        if movers[i].flash == False:
+            saved_movers.append(movers[i])
+        else:
+            movers[i].showArrow()
+            movers[i].glow()
         movers[i].update()
-        movers[i].check_edges()
-        movers[i].showArrow()
+        # movers[i].check_edges()
+        
+    for saved_mover in saved_movers:
+        saved_mover.show()
+        saved_mover.showArrow()
+        saved_mover.update()
+        # saved_mover.check_edges()
+        
+        
         
     fill(map(len(movers), 0, 60, 180, 0), 100, 100)
     text(len(movers), width-50, height-50)
@@ -68,10 +83,19 @@ def draw():
                 
             
 def mousePressed():
-    global attractors, mover
+    global attractors, movers
     # if mouseButton == LEFT:
     #     attractors.append(Attractor(mouseX, mouseY, random(1, 3)))  
     # if mouseButton == RIGHT:
     #     attractors.append(Repulser(mouseX, mouseY, random(1, 3)))
-    for i in range(5): 
-        movers.append(Mover(random(width/1.5), random(height/1.25)))
+    if mouseButton == LEFT:
+        for i in range(1): 
+            movers.append(Mover(random(width/1.5), random(height/1.25)))
+    else:
+        for mover in movers:
+            if dist(mover.pos.x, mover.pos.y, mouseX, mouseY) < mover.r:
+                mover.flash = not mover.flash
+        
+    
+        
+    

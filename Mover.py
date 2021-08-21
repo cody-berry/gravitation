@@ -6,15 +6,16 @@ class Mover(object):
         self.vel = PVector(0, 0)
         self.acc = PVector(0, 0)
         self.m = random(3, 8)
-        self.r = sqrt(self.m) * 10
+        self.r = self.m * 10
         self.G = random(1, 3)
         self.total_force = PVector(0, 0)
+        self.flash = False # This is whether or not we wanna call glow or show.
         
     
     # If we don't do this, how are we going to see where the movers are?
     def show(self): 
         fill(0, 0, 100, 50)
-        stroke(0, 0, 100, 50)
+        blendMode(DIFFERENCE)
         circle(self.pos.x, self.pos.y, self.r*2)
         
         
@@ -36,6 +37,24 @@ class Mover(object):
              self.total_force.mag()*6 - 3,
              3)
         popMatrix()
+    
+    
+    def glow(self):
+        fill(0, 0, 50, 10)
+        rectMode(CENTER)
+        circle(self.pos.x, self.pos.y, self.r*8)
+        fill(0, 0, 100, 30)
+        circle(self.pos.x, self.pos.y, self.r*6)
+        fill(0, 0, 100, 40)
+        circle(self.pos.x, self.pos.y, self.r*4)
+        fill(0, 0, 100, 50)
+        circle(self.pos.x, self.pos.y, self.r*3)
+        fill(0, 0, 100, 60)
+        circle(self.pos.x, self.pos.y, self.r*2.5)
+        fill(0, 0, 100, 67)
+        circle(self.pos.x, self.pos.y, self.r*2.25)
+        fill(0, 0, 100, 72)
+        circle(self.pos.x, self.pos.y, self.r*2.125)
         
         
     def apply_force(self, force): # force is the force we're going to apply
