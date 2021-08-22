@@ -1,5 +1,7 @@
 from Attractor import *
 
+
+# Repulser is the oppisite of Attractor.
 class Repulser(Attractor):
     # We don't need a constructer because if we did, then it would be the exact
     # same. Python allows us to not contain a constructer if it is the exact
@@ -12,10 +14,8 @@ class Repulser(Attractor):
         circle(self.pos.x, self.pos.y, 10)
         
     def attract(self, mover):
-        # Repulsing is the opposite of attracting.
-        return -1*Attractor.attract(Attractor(self.pos.x, self.pos.y, self.G), 
-                                    # how it would be to be an attractor with the
-                                    # same arguments as the arguments passed into
-                                    # self, this class
-                                    mover)
+        # Repulsing is the opposite of attracting. so we need to call the attract function for
+        # Mover. 'self' needs to be replaced with a mover instance because otherwise Python
+        # would get confused.
+        return -1*Attractor.attract(Mover(self.pos.x, self.pos.y), mover)
         

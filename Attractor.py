@@ -1,9 +1,11 @@
 from Mover import *
 
-class Attractor:
-    def __init__(self, x, y, gravitational_constant):
+
+# A class that we don't need anymore that attracts movers with Newton's Gravitational Law.
+class Attractor(Mover):
+    def __init__(self, x, y):
         self.pos = PVector(x, y)
-        self.G = gravitational_constant
+        self.G = 1
         self.r = 10
         self.c = color(0, 0, 0, 100) # the color for the inside
         
