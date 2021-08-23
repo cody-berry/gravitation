@@ -11,9 +11,10 @@
 # v0.5  - path tracing
 # v0.51 - flash balls
 # v1:
-# v1.   - P3D and PeasyCam
-# v1.   - gravitation in 3D
-# v1.   - 
+# v1.1  - P3D and PeasyCam and gravitation in 3D
+# v1.11 - 3-body problem representation when len(movers) = 3
+# v1.12 - Making seperate function for applying the force, updating the movers, showing the movers,
+# and drawing the 3-body representation
 
 
 add_library("PeasyCam")
@@ -26,57 +27,124 @@ def setup():
     global movers, attractors, cam
     size(1000, 700, P3D)
     #filter(BLUR, 6)
-    cam = PeasyCam(this, width/2, height/2, 0, 1000)
+    cam = PeasyCam(this, width/2, height/2, 0, 4000)
     colorMode(HSB, 360, 100, 100, 100)
-    attractors = []
+    # attractors = []
     movers = []
+    
 
 
 
 def draw():
-    global movers, attractors
+    global movers, attractors, total
     background(209, 95, 33, 10)
-    # fill(0, 3)
-    # fill(209, 95, 33, 10)
-    # rectMode(CORNER)
-    # rect(0, 0, width, height)
     
+    sphereDetail(mouseX/120 + 5)
+    
+    show_movers()
+    apply_mutual_gravitation_force()
+    update_movers()    
+    draw_three_body_representation()
+    draw_3D_axes()
+        
+    textAlign(RIGHT)
+    fill(map(len(movers), 0, 60, 180, 0), 100, 100)
+    
+    cam.beginHUD()
+    text("{} movers".format(len(movers)), width-50, height-50)
+    cam.endHUD()
+    lights()
+
+
+# Draws the bounding box
+def draw_bounding_box():
+    pushMatrix()
+    translate(0, 0, -height) # To the back edge!
+    fill(0, 0, 100, 15)
+    noStroke()
+    rectMode(CENTER)
+    rect(
+    popMatrix()
+
+# Draws the y, x, and z axes
+def draw_3D_axes():
+    # line doesn't work in 3D, so we have to use thin boxes.
+    strokeWeight(1)
+    stroke(86, 89, 86)
+    line(0, 0, 0, 0, -40000, 0) # y-axis
+    stroke(86, 89, 86, 30)
+    line(0, 0, 0, 0, 40000, 0)
+    stroke(5, 84, 90)
+    line(0, 0, 0, 40000, 0, 0) # x-axis
+    stroke(5, 84, 90, 30)
+    line(0, 0, 0, -40000, 0, 0)
+    stroke(212, 84, 90)
+    line(0, 0, 0, 0, 0, 40000) # z-axis
+    stroke(212, 84, 90, 30)
+    line(0, 0, 0, 0, 0, -40000)
+    
+
+# This method isn't needed anymore because there is no glow.
+def draw_saved_movers():
     # saved_movers keeps track of what needs to be drawn last. For example, in 2D the normal
-    # movers need to be kept in saved_movers because they'll be drawn last.
-    saved_movers = []   
-    
-    
-    
-    total = 0
-    
+    # movers need to be kept in saved_movers because they'll be drawn last. Since glow isn't there
+    # anymore, we don't need saved_movers.
+    # saved_movers = []   
+    for saved_mover in saved_movers:
+        saved_mover.show()
+        saved_mover.glow()
+        saved_mover.showArrow()
+        saved_mover.update()
+        saved_mover.check_edges()
+
+
+# For drawing a triangle for the 3-body problem
+def draw_three_body_representation():
+    if len(movers) == 3:
+        # If we don't fill, we won't see the triangle.
+        fill(0, 0, 100, 15)
+        beginShape()
+        # The vertex for movers[0] below, the first vertex of the triangle
+        vertex(movers[0].pos.x, movers[0].pos.y, movers[0].pos.z)
+        # The vertex for movers[1] below, the second vertex of the triangle
+        vertex(movers[1].pos.x, movers[1].pos.y, movers[1].pos.z)
+        # The vertex for movers[2] below, the third vertex of the triangle
+        vertex(movers[2].pos.x, movers[2].pos.y, movers[2].pos.z)
+        endShape()
+
+
+# Applies mutual gravitation force
+def apply_mutual_gravitation_force():
+    global movers
     for i in range(len(movers)):
         for j in range(len(movers)):
             if j != i:
                 movers[j].apply_force(movers[i].attract(movers[j]))
-        if movers[i].flash == False:
-            total += 1
-            movers[i].show()
-            movers[i].showArrow()
-        else:
-            total += 8
-            saved_movers.append(movers[i])
-            
-        movers[i].update()
-        # movers[i].check_edges()
-        
-    # for saved_mover in saved_movers:
-    #     saved_mover.show()
-    #     saved_mover.glow()
-    #     saved_mover.showArrow()
-    #     saved_mover.update()
-    #     saved_mover.check_edges()
-        
-        
-        
-    fill(map(total, 0, 60, 180, 0), 100, 100)
-    text(str(total) + "movers", width-50, height-50)
-    lights()
 
+                
+# Shows the movers
+def show_movers():
+    global movers
+    for i in range(len(movers)):
+
+        movers[i].show()
+        movers[i].showArrow()
+            
+        
+# Updates the movers
+def update_movers():
+    global movers
+    for i in range(len(movers)):
+        movers[i].update()
+        movers[i].check_edges()        
+
+
+
+def path_trace_in_2D():
+    fill(0, 3)
+    fill(209, 95, 33, 10)
+    rectMode(CORNER)
+    rect(0, 0, width, height)
 
 # This function does gravitation with attractors.
 def attractor_gravitation():
@@ -104,11 +172,10 @@ def keyPressed():
     #     attractors.append(Repulser(mouseX, mouseY, random(1, 3)))
     if key == "a":
         for i in range(1): 
-            movers.append(Mover(random(width), random(height), random(height)))
-    if key == "g":
-        for mover in movers:
-            if dist(mover.pos.x, mover.pos.y, mouseX, mouseY) < mover.r:
-                mover.flash = not mover.flash
+            movers.append(Mover(random(-width, width), random(-height, height), random(-height, height)))
+            
+            
+
         
     
         

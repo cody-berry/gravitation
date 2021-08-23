@@ -64,8 +64,8 @@ class Mover(object):
             self.pos.x = width - self.r
             self.vel.x *= -1
         # left edge
-        if self.pos.x - self.r < 0:
-            self.pos.x = self.r
+        if self.pos.x - self.r < -width:
+            self.pos.x = -width + self.r
             self.vel.x *= -1
         
         # horizontal edges
@@ -74,9 +74,20 @@ class Mover(object):
             self.pos.y = height - self.r
             self.vel.y *= -1
         # top edge
-        if self.pos.y - self.r < 0:
-            self.pos.y = self.r
+        if self.pos.y - self.r < -height:
+            self.pos.y = -height + self.r
             self.vel.y *= -1
+            
+        # back edge
+        if self.pos.z - self.r < -height:
+            self.pos.z = -height + self.r
+            self.vel.z *= -1
+        
+        # front edge
+        if self.pos.z + self.r > height:
+            self.pos.z = height - self.r
+            self.vel.z *= -1
+            
     
     # for mutual gravitation        
     def attract(self, mover):
