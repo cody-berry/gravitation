@@ -6,7 +6,7 @@ class Mover(object):
         self.pos = PVector(x, y, z)
         self.vel = PVector(0, 0, 0)
         self.acc = PVector(0, 0, 0)
-        self.m = random(3, 8)
+        self.m = random(8, 16)
         self.r = self.m*2
         self.G = random(1, 3)
         self.flash = False # This is whether or not we wanna call glow or show.

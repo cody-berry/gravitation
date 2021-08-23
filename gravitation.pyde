@@ -14,7 +14,8 @@
 # v1.1  - P3D and PeasyCam and gravitation in 3D
 # v1.11 - 3-body problem representation when len(movers) = 3
 # v1.12 - Making seperate function for applying the force, updating the movers, showing the movers,
-# and drawing the 3-body representation
+# drawing the 3-body representation, and drawing blender axes
+# v1.   - But where's the bounding box?
 
 
 add_library("PeasyCam")
@@ -27,11 +28,10 @@ def setup():
     global movers, attractors, cam
     size(1000, 700, P3D)
     #filter(BLUR, 6)
-    cam = PeasyCam(this, width/2, height/2, 0, 4000)
+    cam = PeasyCam(this, 0, 0, 0, 2000)
     colorMode(HSB, 360, 100, 100, 100)
     # attractors = []
     movers = []
-    
 
 
 
@@ -51,22 +51,13 @@ def draw():
     fill(map(len(movers), 0, 60, 180, 0), 100, 100)
     
     cam.beginHUD()
+    fill(0, 0, 100, 100)
     text("{} movers".format(len(movers)), width-50, height-50)
     cam.endHUD()
     lights()
 
 
-# Draws the bounding box
-def draw_bounding_box():
-    pushMatrix()
-    translate(0, 0, -height) # To the back edge!
-    fill(0, 0, 100, 15)
-    noStroke()
-    rectMode(CENTER)
-    rect(
-    popMatrix()
-
-# Draws the y, x, and z axes
+# Draws the y (green), x(red), and z(blue) axes. 
 def draw_3D_axes():
     # line doesn't work in 3D, so we have to use thin boxes.
     strokeWeight(1)
@@ -95,7 +86,7 @@ def draw_saved_movers():
         saved_mover.glow()
         saved_mover.showArrow()
         saved_mover.update()
-        saved_mover.check_edges()
+        # saved_mover.check_edges()
 
 
 # For drawing a triangle for the 3-body problem
@@ -136,7 +127,7 @@ def update_movers():
     global movers
     for i in range(len(movers)):
         movers[i].update()
-        movers[i].check_edges()        
+        # movers[i].check_edges()        
 
 
 
@@ -162,7 +153,7 @@ def attractor_gravitation():
             mover.apply_force(attractor.attract(mover))
         mover.show()
         mover.update()
-        mover.check_edges()
+        # mover.check_edges()
             
 def keyPressed():
     global attractors, movers
