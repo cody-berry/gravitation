@@ -4,18 +4,37 @@
 class Mover(object):
     def __init__(self, x, y, z):
         self.pos = PVector(x, y, z)
-        self.vel = PVector(0, 0, 0)
+        self.vel = PVector(0,0,0) #PVector.random3D().mult(random(-5, 5))
         self.acc = PVector(0, 0, 0)
         self.m = random(8, 16)
         self.r = self.m*2
         self.G = random(1, 3)
         self.flash = False # This is whether or not we wanna call glow or show.
+        self.path = [] # To trace the path in 3D, we need to keep track of
+        # the path that the mover has taken. The elements are PVectors.
         
     
     # If we don't do this, how are we going to see where the movers are?
     def show(self): 
-        fill(0, 0, 100, 50)
         # blendMode(DIFFERENCE)
+        
+        # We're iterating through the list so that we can show each path ball
+        for i in range(len(self.path)):
+            # WE don't want the trail to suddendly dissapear; we want the 
+            # trail to dissapear over time.
+            fill(0, 0, 100, 90 - (len(self.path) - i))
+            # We want the stroke to fade out
+            # stroke(0, 0, 100, map(len(self.path), 100, 0, 0, 100))
+            noStroke()
+            pushMatrix()
+            translate(self.path[i].x, self.path[i].y, self.path[i].z)
+            sphere(self.r*2)
+            popMatrix()
+            if i < len(self.path) - 1:
+                stroke(0, 0, 100)
+                line(self.path[i].x, self.path[i].y, self.path[i].z, 
+                     self.path[i+1].x, self.path[i+1].y, self.path[i+1].z)
+        
         pushMatrix()
         translate(self.pos.x, self.pos.y, self.pos.z)
         sphere(self.r*2)
@@ -54,6 +73,10 @@ class Mover(object):
         self.vel.add(self.acc)
         self.pos.add(self.vel)
         self.acc = PVector(0, 0)
+        if frameCount % 5 == 0:
+            self.path.append(self.pos.copy())
+            if len(self.path) > 100:
+                self.path.pop(0)
         
     
    

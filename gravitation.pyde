@@ -9,13 +9,12 @@
 # v0.4  - mutual gravitation
 # v0.41 - draw force vector
 # v0.5  - path tracing
-# v0.51 - flash balls
-# v1:
-# v1.1  - P3D and PeasyCam and gravitation in 3D
-# v1.11 - 3-body problem representation when len(movers) = 3
-# v1.12 - Making seperate function for applying the force, updating the movers, showing the movers,
-# drawing the 3-body representation, and drawing blender axes
-# v1.   - But where's the bounding box?
+# v0.51 - flash balls: "glowing" balls with multiple circles drawn
+# v0.6  - P3D and PeasyCam and gravitation in 3D
+# v0.61 - 3-body problem representation when len(movers) = 3
+# v0.62 - Making seperate function for applying the force, updating the movers, showing the movers,
+#         drawing the 3-body representation, and drawing blender axes
+# v0.7  - path tracing in 3D
 
 
 add_library("PeasyCam")
@@ -32,6 +31,7 @@ def setup():
     colorMode(HSB, 360, 100, 100, 100)
     # attractors = []
     movers = []
+    hint(DISABLE_DEPTH_TEST)
 
 
 
@@ -39,7 +39,7 @@ def draw():
     global movers, attractors, total
     background(209, 95, 33, 10)
     
-    sphereDetail(mouseX/120 + 5)
+    sphereDetail(10)
     
     show_movers()
     apply_mutual_gravitation_force()
@@ -117,7 +117,6 @@ def apply_mutual_gravitation_force():
 def show_movers():
     global movers
     for i in range(len(movers)):
-
         movers[i].show()
         movers[i].showArrow()
             
@@ -130,12 +129,14 @@ def update_movers():
         # movers[i].check_edges()        
 
 
-
+# It traces the path of the balls in 2D. If you don't disable the background, this 
+# won't work.
 def path_trace_in_2D():
     fill(0, 3)
     fill(209, 95, 33, 10)
     rectMode(CORNER)
     rect(0, 0, width, height)
+    
 
 # This function does gravitation with attractors.
 def attractor_gravitation():
